@@ -1,8 +1,8 @@
 const contentfulImport = require('contentful-import');
-const dotEnv = require('dotenv');
-// https://github.com/contentful/contentful-import
-
-dotEnv.config({ path: `${process.env.PATH_TO_ENV_FILE}` });
+if (!process.env.VERCEL) {
+  const dotEnv = require('dotenv');
+  dotEnv.config({ path: `${process.env.PATH_TO_ENV_FILE}` });
+}
 
 const importOptions = {
   spaceId: process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID,
