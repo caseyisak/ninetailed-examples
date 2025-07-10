@@ -1,7 +1,21 @@
 const contentfulImport = require('contentful-import');
+
 if (!process.env.VERCEL) {
   const dotEnv = require('dotenv');
   dotEnv.config({ path: `${process.env.PATH_TO_ENV_FILE}` });
+}
+
+// ✅ Move validation *after* dotenv (for local), but don’t throw unless still missing
+const requiredVars = [
+  'NEXT_PUBLIC_CONTENTFUL_SPACE_ID',
+  'CONTENTFUL_MANAGEMENT_TOKEN',
+];
+
+const missing = requiredVars.filter((v) => !process.env[v]);
+
+if (missing.length) {
+  console.warn('Missing required environment variables:', missing.join(', '));
+  process.exit(1);
 }
 
 const importOptions = {
@@ -11,25 +25,13 @@ const importOptions = {
   contentFile: './contentful/data/contentful-space-data.json',
 };
 
-if (
-  !process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID ||
-  !process.env.CONTENTFUL_MANAGEMENT_TOKEN
-) {
-  throw new Error(
-    [
-      'Parameters missing...',
-      'Please insert the following credentials into your .env.local file:',
-      '- NEXT_PUBLIC_CONTENTFUL_SPACE_ID=XXX',
-      '- CONTENTFUL_MANAGEMENT_TOKEN=CFPAT-XXX',
-      'Afterwards run the setup command as follows:',
-      '"npm run setup" or "yarn setup"',
-    ].join('\n')
-  );
-}
 contentfulImport(importOptions)
   .then(() => {
-    return console.log('The content model of your space is set up!');
+    return console.log(
+      '✅ Content model and entries imported to Contentful space!'
+    );
   })
   .catch((e) => {
-    return console.error(e);
+    console.error('❌ Contentful import failed:', e);
+    process.exit(1);
   });
