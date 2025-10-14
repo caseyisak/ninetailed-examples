@@ -24,7 +24,7 @@
     "delete-entries": "PATH_TO_ENV_FILE=.env.local CONTENT_TYPE=testType LIMIT=1000 node ./contentful/deleteEntriesOfContentType.js",
     "recreate-env": "PATH_TO_ENV_FILE=.env.local node ./contentful/recreateBlankEnv.js",
     "production-clean-then-build-and-setup": "if [ \"$VERCEL_ENV\" == \"production\" ]; then echo \"production environment\" && npx contentful-clean-space --space-id $NEXT_PUBLIC_CONTENTFUL_SPACE_ID --env $NEXT_PUBLIC_CONTENTFUL_ENVIRONMENT --accesstoken $CONTENTFUL_MANAGEMENT_TOKEN --content-types=true --assets=true --yes=true --verbose=true && PATH_TO_ENV_FILE=.env.local node ./contentful/setup.js; else echo \"not production environment, so won't touch Contentful\"; fi; next build",
-    "prebuild": "if [ \"$VERCEL_ENV\" = \"production\" ]; then node ./contentful/setup.js; fi"
+    "prebuild": "if [ \"$VERCEL_ENV\" = \"production\" ]; then echo \"Skipping Contentful setup in production - using existing content\"; fi"
   },
   "dependencies": {
     "@contentful/live-preview": "4.5.6",
