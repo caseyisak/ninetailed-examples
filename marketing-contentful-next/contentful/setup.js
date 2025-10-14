@@ -15,7 +15,12 @@ const missing = requiredVars.filter((v) => !process.env[v]);
 
 if (missing.length) {
   console.warn('Missing required environment variables:', missing.join(', '));
-  process.exit(1);
+  if (process.env.VERCEL) {
+    console.log('⚠️  Skipping Contentful setup in Vercel environment due to missing variables');
+    process.exit(0); // Don't fail the build in Vercel
+  } else {
+    process.exit(1); // Fail in local development
+  }
 }
 
 const importOptions = {
